@@ -28,13 +28,10 @@ void quickSort(int vector[], int left, int right){
     }while(min < max);
     if (left < max) quickSort(vector, left, max);
     if (right > min) quickSort(vector, min, right);
-
-    int sum = comparisonQuickSort + assignmentsQuickSort;
-    fprintf(fileQuickSort, "%d,%d,%d\n", comparisonQuickSort, assignmentsQuickSort, sum);
 }
 
 
-int max (int *array, int size, int i, int left, int right) {
+int max(int *array, int size, int i, int left, int right) {
     int index = i;
     if (left < size && array[left] > array[index]) {
         index = left;
@@ -100,6 +97,39 @@ void generateAvgCase(int arraySize){
     }
 
     quickSort(firstArray, 0, arraySize - 1);
+    int sum = comparisonQuickSort + assignmentsQuickSort;
+    fprintf(fileQuickSort, "%d,%d,%d\n", comparisonQuickSort, assignmentsQuickSort, sum);
+}
+
+void generateWorst_QuickSort(int arraySize){
+    int firstArray[arraySize];
+
+    comparisonHeapSort = 0;
+    comparisonQuickSort = 0;
+    assignmentsHeapSort = 0;
+    assignmentsQuickSort = 0;
+
+    /**
+     * Worst case is when the array is sorted in descending order
+     * **/
+
+    int number = 0;
+    for (int i = 0; i < arraySize / 2; ++i) {
+        firstArray[i] = number;
+        number++;
+    }
+
+    firstArray[arraySize/2] = number;
+    number--;
+    for (int i = arraySize/2 + 1; i < arraySize; ++i) {
+        firstArray[i] = number;
+        number--;
+    }
+
+    quickSort(firstArray, 0, arraySize-1);
+    int sum = comparisonQuickSort + assignmentsQuickSort;
+    fprintf(fileQuickSort, "\nQuickSort Worst case\n");
+    fprintf(fileQuickSort, "%d,%d,%d\n", comparisonQuickSort, assignmentsQuickSort, sum);
 }
 
 
@@ -108,6 +138,6 @@ int main() {
     for (int i = 100; i < MAX ; i+=100) {
         generateAvgCase(i);
     }
-    
+
     return 0;
 }
