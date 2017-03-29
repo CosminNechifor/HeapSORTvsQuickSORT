@@ -8,7 +8,8 @@ using namespace std;
 
 int comparisonHeapSort, comparisonQuickSort;
 int assignmentsHeapSort, assignmentsQuickSort;
-
+FILE *fileQuickSort = fopen("../HeapSort.txt", "w");
+FILE *fileHeapSort = fopen("../QuickSort.txt", "w");
 
 void quickSort(int vector[], int left, int right){
     int temp, min, max, mid;
@@ -27,6 +28,9 @@ void quickSort(int vector[], int left, int right){
     }while(min < max);
     if (left < max) quickSort(vector, left, max);
     if (right > min) quickSort(vector, min, right);
+
+    int sum = comparisonQuickSort + assignmentsQuickSort;
+    fprintf(fileQuickSort, "%d,%d,%d\n", comparisonQuickSort, assignmentsQuickSort, sum);
 }
 
 
@@ -68,12 +72,13 @@ void heapSort(int *array, int size) {
         ///recall
         heapify(array, size - i - 1, 0);
     }
+    int sum = comparisonHeapSort + assignmentsHeapSort;
+    fprintf(fileHeapSort, "%d,%d,%d\n", comparisonHeapSort, assignmentsHeapSort, sum);
 }
 
-void generateArrayAndSort(int arraySize){
+void generateAvgCase(int arraySize){
     int firstArray[arraySize];
     int secondArray[arraySize];
-    FILE *fileQuickSort, *fileHeapSort;
 
     /**
      *  I keep track with comparison, and assignment numbers of each algorithm.
@@ -83,9 +88,6 @@ void generateArrayAndSort(int arraySize){
     assignmentsHeapSort = 0;
     assignmentsQuickSort = 0;
 
-    fileHeapSort = fopen("../QuickSort.txt", "w");
-    fileHeapSort = fopen("../HeapSort.txt", "w");
-
     for (int i = 0; i < arraySize; ++i) {
         firstArray[i] = rand()%(MAX) + 1;
         secondArray[i] = firstArray[i];
@@ -93,29 +95,19 @@ void generateArrayAndSort(int arraySize){
 
     heapSort(firstArray, arraySize);
 
-//    /////
-//    cout << "\n\nSorted with heapsort!\n";
-//    for (int i = 0; i < arraySize; ++i) {
-//        cout << firstArray[i] << " ";
-//    }
-
     for (int i = 0; i < arraySize; ++i) {
         firstArray[i] = secondArray[i];
     }
 
     quickSort(firstArray, 0, arraySize - 1);
-
-//    /////
-//    cout << "\n\nSorted with quicksort!\n";
-//    for (int k = 0; k < arraySize; ++k) {
-//        cout << firstArray[k] << " ";
-//    }
 }
 
 
 
 int main() {
-
-    generateArrayAndSort(40);
+    for (int i = 100; i < MAX ; i+=100) {
+        generateAvgCase(i);
+    }
+    
     return 0;
 }
