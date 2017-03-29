@@ -3,8 +3,12 @@
 #include <cstdio>
 
 using namespace std;
-#define MAX 20
+#define MAX 10000
 #define TRUE 1
+
+int comparisonHeapSort, comparisonQuickSort;
+int assignmentsHeapSort, assignmentsQuickSort;
+
 
 void quickSort(int vector[], int left, int right){
     int temp, min, max, mid;
@@ -66,38 +70,52 @@ void heapSort(int *array, int size) {
     }
 }
 
+void generateArrayAndSort(int arraySize){
+    int firstArray[arraySize];
+    int secondArray[arraySize];
+    FILE *fileQuickSort, *fileHeapSort;
 
+    /**
+     *  I keep track with comparison, and assignment numbers of each algorithm.
+     * **/
+    comparisonHeapSort = 0;
+    comparisonQuickSort = 0;
+    assignmentsHeapSort = 0;
+    assignmentsQuickSort = 0;
 
-int main() {
-    int firstArray[MAX];
-    int secondArray[MAX];
-    for (int i = 0; i < MAX ; ++i) {
-        firstArray[i] = rand()%(1000) + 1;
+    fileHeapSort = fopen("../QuickSort.txt", "w");
+    fileHeapSort = fopen("../HeapSort.txt", "w");
+
+    for (int i = 0; i < arraySize; ++i) {
+        firstArray[i] = rand()%(MAX) + 1;
         secondArray[i] = firstArray[i];
     }
-    cout << "\nInitial array:";
-    for (int k = 0; k < 20; ++k) {
-        cout << firstArray[k] << " ";
-    }
 
-    quickSort(firstArray, 0, MAX-1);
+    heapSort(firstArray, arraySize);
 
-    cout << "\n\nSorted with quicksort!\n";
-    for (int k = 0; k < MAX; ++k) {
-        cout << firstArray[k] << " ";
-    }
+//    /////
+//    cout << "\n\nSorted with heapsort!\n";
+//    for (int i = 0; i < arraySize; ++i) {
+//        cout << firstArray[i] << " ";
+//    }
 
-    for (int i = 0; i < MAX; ++i) {
+    for (int i = 0; i < arraySize; ++i) {
         firstArray[i] = secondArray[i];
     }
 
+    quickSort(firstArray, 0, arraySize - 1);
 
-    heapSort(firstArray, MAX);
-    cout << "\n\nSorted with heapsort!\n";
-    for (int i = 0; i < MAX; ++i) {
-        cout << firstArray[i] << " ";
-    }
+//    /////
+//    cout << "\n\nSorted with quicksort!\n";
+//    for (int k = 0; k < arraySize; ++k) {
+//        cout << firstArray[k] << " ";
+//    }
+}
 
 
+
+int main() {
+
+    generateArrayAndSort(40);
     return 0;
 }
