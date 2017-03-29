@@ -132,12 +132,43 @@ void generateWorst_QuickSort(int arraySize){
     fprintf(fileQuickSort, "%d,%d,%d\n", comparisonQuickSort, assignmentsQuickSort, sum);
 }
 
+void generateBest_QuickSort(int arraySize){
+    int firstArray[arraySize];
 
+    comparisonHeapSort = 0;
+    comparisonQuickSort = 0;
+    assignmentsHeapSort = 0;
+    assignmentsQuickSort = 0;
+
+    for (int i = 0; i < arraySize; ++i) {
+        firstArray[i] = i;
+    }
+
+    quickSort(firstArray, 0, arraySize - 1);
+
+    int sum = comparisonQuickSort + assignmentsQuickSort;
+    fprintf(fileQuickSort, "\nQuickSort Best case\n");
+    fprintf(fileQuickSort, "%d,%d,%d\n", comparisonQuickSort, assignmentsQuickSort, sum);
+
+}
 
 int main() {
+
     for (int i = 100; i < MAX ; i+=100) {
+        printf("\n%d", i);
         generateAvgCase(i);
     }
+
+    for (int i = 100; i < MAX; i+=100) {
+        printf("\n%d", i);
+        generateBest_QuickSort(i);
+    }
+
+    for (int i = 0; i < MAX; i += 100) {
+        printf("\n%d", i);
+        generateWorst_QuickSort(i);
+    }
+
 
     return 0;
 }
