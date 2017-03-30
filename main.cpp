@@ -8,26 +8,26 @@ using namespace std;
 
 int comparisonHeapSort, comparisonQuickSort;
 int assignmentsHeapSort, assignmentsQuickSort;
-FILE *fileQuickSort = fopen("../HeapSort.txt", "w");
-FILE *fileHeapSort = fopen("../QuickSort.txt", "w");
+FILE *fileHeapSort = fopen("../HeapSort.txt", "w");
+FILE *fileQuickSort = fopen("../QuickSort.txt", "w");
 
-void quickSort(int vector[], int left, int right){
+void quickSort(int array[], int left, int right){
     int temp, min, max, mid;
-    mid = vector[left + (right - left)/2];
+    mid = array[left + (right - left)/2];
     min = left;
     max = right;
     do{
-        while (vector[min] < mid) min++;
-        while (vector[max] > mid) max--;
+        while (array[min] < mid) min++;
+        while (array[max] > mid) max--;
 
         if (min <= max){
-            temp = vector[min];
-            vector[min++] = vector[max];
-            vector[max--] = temp;
+            temp = array[min];
+            array[min++] = array[max];
+            array[max--] = temp;
         }
     }while(min < max);
-    if (left < max) quickSort(vector, left, max);
-    if (right > min) quickSort(vector, min, right);
+    if (left < max) quickSort(array, left, max);
+    if (right > min) quickSort(array, min, right);
 }
 
 
@@ -69,8 +69,6 @@ void heapSort(int *array, int size) {
         ///recall
         heapify(array, size - i - 1, 0);
     }
-    int sum = comparisonHeapSort + assignmentsHeapSort;
-    fprintf(fileHeapSort, "%d,%d,%d\n", comparisonHeapSort, assignmentsHeapSort, sum);
 }
 
 void generateAvgCase(int arraySize){
@@ -91,45 +89,16 @@ void generateAvgCase(int arraySize){
     }
 
     heapSort(firstArray, arraySize);
+    int sumHeapSort = comparisonHeapSort + assignmentsHeapSort;
+    fprintf(fileHeapSort, "%d,%d,%d\n", comparisonHeapSort, assignmentsHeapSort, sumHeapSort);
 
     for (int i = 0; i < arraySize; ++i) {
         firstArray[i] = secondArray[i];
     }
 
     quickSort(firstArray, 0, arraySize - 1);
-    int sum = comparisonQuickSort + assignmentsQuickSort;
-    fprintf(fileQuickSort, "%d,%d,%d\n", comparisonQuickSort, assignmentsQuickSort, sum);
-}
-
-void generateWorst_QuickSort(int arraySize){
-    int firstArray[arraySize];
-
-    comparisonHeapSort = 0;
-    comparisonQuickSort = 0;
-    assignmentsHeapSort = 0;
-    assignmentsQuickSort = 0;
-
-    /**
-     * Worst case is when the array is sorted in descending order
-     * **/
-
-    int number = 0;
-    for (int i = 0; i < arraySize / 2; ++i) {
-        firstArray[i] = number;
-        number++;
-    }
-
-    firstArray[arraySize/2] = number;
-    number--;
-    for (int i = arraySize/2 + 1; i < arraySize; ++i) {
-        firstArray[i] = number;
-        number--;
-    }
-
-    quickSort(firstArray, 0, arraySize-1);
-    int sum = comparisonQuickSort + assignmentsQuickSort;
-    fprintf(fileQuickSort, "\nQuickSort Worst case\n");
-    fprintf(fileQuickSort, "%d,%d,%d\n", comparisonQuickSort, assignmentsQuickSort, sum);
+    int sumQuickSort = comparisonQuickSort + assignmentsQuickSort;
+    fprintf(fileQuickSort, "%d,%d,%d\n", comparisonQuickSort, assignmentsQuickSort, sumQuickSort);
 }
 
 void generateBest_QuickSort(int arraySize){
@@ -147,28 +116,102 @@ void generateBest_QuickSort(int arraySize){
     quickSort(firstArray, 0, arraySize - 1);
 
     int sum = comparisonQuickSort + assignmentsQuickSort;
-    fprintf(fileQuickSort, "\nQuickSort Best case\n");
     fprintf(fileQuickSort, "%d,%d,%d\n", comparisonQuickSort, assignmentsQuickSort, sum);
 
 }
 
-int main() {
+/* This function takes last element as pivot, places
+   the pivot element at its correct position in sorted
+    array, and places all smaller (smaller than pivot)
+   to left of pivot and all greater elements to right
+   of pivot */
+int partition_worst(int *array, int low, int high)
+{
+    int pivot = array[high];    // pivot
+    int i = (low - 1);  // Index of smaller element
 
+    for (int j = low; j <= high- 1; j++)
+    {
+        // If current element is smaller than or
+        // equal to pivot
+        if (array[j] <= pivot)
+        {
+            i++;    // increment index of smaller element
+            int temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+    int temp = array[i+1];
+    array[i+1] = array[high];
+    array[high] = temp;
+    return (i + 1);
+}
+
+/* The main function that implements QuickSort
+ arr[] --> Array to be sorted,
+  low  --> Starting index,
+  high  --> Ending index */
+void quickSort_worst(int arr[], int low, int high)
+{
+    if (low < high)
+    {
+        /* pi is partitioning index, arr[p] is now
+           at right place */
+        int pi = partition_worst(arr, low, high);
+
+        // Separately sort elements before
+        // partition and after partition_worst
+        quickSort_worst(arr, low, pi - 1);
+        quickSort_worst(arr, pi + 1, high);
+    }
+}
+
+void generateWorst_QuickSort(int arraySize){
+    int array[arraySize];
+
+    comparisonHeapSort = 0;
+    comparisonQuickSort = 0;
+    assignmentsHeapSort = 0;
+    assignmentsQuickSort = 0;
+
+    /**
+     * Worst case is when the array is sorted in descending order
+     * **/
+    int number = arraySize;
+
+    for (int i = 0; i < arraySize; ++i) {
+        array[i] = number;
+        number--;
+    }
+
+    quickSort_worst(array, 0, arraySize-1);
+
+    int sum = comparisonQuickSort + assignmentsQuickSort;
+
+    fprintf(fileQuickSort, "%d,%d,%d\n", comparisonQuickSort, assignmentsQuickSort, sum);
+}
+
+
+int main() {
+    fprintf(fileQuickSort, "\nQuickSort Avg case\n");
+    fprintf(fileHeapSort, "\nHeapSort Avg case\n");
     for (int i = 100; i < MAX ; i+=100) {
         printf("\n%d", i);
         generateAvgCase(i);
     }
 
+    fprintf(fileQuickSort, "\nQuickSort Best case\n");
     for (int i = 100; i < MAX; i+=100) {
         printf("\n%d", i);
         generateBest_QuickSort(i);
     }
 
+    fprintf(fileQuickSort, "\n\nQuickSort Worst case\n");
     for (int i = 0; i < MAX; i += 100) {
         printf("\n%d", i);
         generateWorst_QuickSort(i);
     }
-
 
     return 0;
 }
